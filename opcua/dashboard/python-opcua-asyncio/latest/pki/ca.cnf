@@ -1,0 +1,25 @@
+[ req ]
+default_bits = 2048
+default_md = sha256
+distinguished_name = subject
+req_extensions = req_ext
+x509_extensions = req_ext
+string_mask = utf8only
+prompt = no
+
+[ req_ext ]
+basicConstraints = CA:FALSE
+nsCertType = client
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment, dataEncipherment, keyCertSign
+extendedKeyUsage= clientAuth
+nsComment = "OpenSSL Generated Certificate"
+subjectKeyIdentifier=hash
+authorityKeyIdentifier=keyid,issuer
+subjectAltName = URI:urn:opcua-server.local,IP:127.0.0.1
+
+[ subject ]
+countryName = DE
+stateOrProvinceName = BY
+localityName = R
+organizationName = OTH
+commonName = opcua-client
