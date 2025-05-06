@@ -49,7 +49,7 @@ async def main(server_uri: str):
     # auto-reconnect to server in any case
     while True:
         try:
-            logger.info(f"[INFO] Connecting to {server_uri}")
+            logger.info(f"Connecting to {server_uri}")
             async with Client(url=server_uri) as client:
 
                 # TODO: enable this and make it configurable
@@ -65,19 +65,19 @@ async def main(server_uri: str):
                 for path in list(node_buffers) + settable_nodes:
                     try:
                         node = await client.nodes.objects.get_child(path)
-                        logger.info(f"[INFO] Resolved {'/'.join(path)} -> {node.nodeid}")
+                        logger.info(f"Resolved {path} -> {node.nodeid}")
                         # only subscribe if it has a buffer attached
                         if path in node_buffers:
                             nodes.append(node)
                         path_to_nodeid[path] = node
                     except Exception as e:
-                        logger.error(f"[ERROR] Failed to resolve {'/'.join(path)}: {e}")
+                        logger.error(f"Failed to resolve {path}: {e}")
 
                 # create subscription
                 handler = SubscriptionHandler()
                 subscription = await client.create_subscription(1000, handler)
                 await subscription.subscribe_data_change(nodes)
-                logger.info(f"[INFO] Subscribed to {len(nodes)} nodes. Monitoring...")
+                logger.info(f"Subscribed to {len(nodes)} nodes. Monitoring...")
 
                 # wait for set signals and write them
                 while True:
@@ -85,7 +85,7 @@ async def main(server_uri: str):
                     await nodeid.write_value(value)
 
         except Exception as e:
-            logger.warning(f"[WARN] Connection failed: {e}. Retrying in 2 seconds...")
+            logger.warning(f"Connection failed: {e}. Retrying in 2 seconds...")
             await asyncio.sleep(2)
 
 def start_visualization():

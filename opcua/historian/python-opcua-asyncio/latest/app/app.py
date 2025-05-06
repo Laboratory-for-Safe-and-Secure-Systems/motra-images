@@ -21,59 +21,54 @@ NODE_CONFIGS = [
 # maps node ids to db table after requesting them
 nodeid_to_table = {}
 
-# called when new value is written to server
-class SubscriptionHandler:
-    def datachange_notification(self, node, val, data):
-        # probably not necessary if insert ts == handler ts
-        # ts = data.monitored_item.Value.SourceTimestamp
-        # TODO: use this line instead of the current one
-        # TODO: current server request return None value which is forbidden
-        # value_queue.put_nowait((nodeid_to_table[node], val))
-        value_queue.put_nowait((nodeid_to_table[node], 7))
-
 # task 1/2 writes to db from queue
 async def db_writer_task(database: str):
     async with aiosqlite.connect(database) as db:
-        logger.info(f"[INFO] Connected to database")
+        logger.info(f"Connected to database")
         try:
             while True:
                 table, value = await value_queue.get()
-                logger.info(f"[INFO]: Insert {value} into {table}")
                 await db.execute(f"INSERT INTO {table} (pct) VALUES (?)", (value,))
                 await db.commit()
         except asyncio.TimeoutError as e:
-            logger.error(f"[ERROR] Timeout error during write: {e}. Skipping...")
+            logger.error(f"Timeout error during write: {e}. Skipping...")
+
+# called when new value is written to server
+class SubscriptionHandler:
+    def datachange_notification(self, node, value, data):
+        if value:
+            value_queue.put_nowait((nodeid_to_table[node], value))
 
 # task 2/2 which subscribes to server
 async def client_task(server_uri: str):
     # auto-reconnect to server in any case
     while True:
         try:
-            logger.info(f"[INFO] Connecting to {server_uri}")
+            logger.info(f"Connecting to {server_uri}")
             async with Client(url=server_uri) as client:
                 # Resolve NodeIds from browse paths
                 nodes = []
                 for path, table in NODE_CONFIGS:
                     try:
                         node = await client.nodes.objects.get_child(path)
-                        logger.info(f"[INFO] Resolved {'/'.join(path)} -> {node.nodeid}")
+                        logger.info(f"Resolved {path} -> {node.nodeid}")
                         nodes.append(node)
                         nodeid_to_table[node] = table
                     except Exception as e:
-                        logger.error(f"[ERROR] Failed to resolve {'/'.join(path)}: {e}")
+                        logger.error(f"Failed to resolve {path}: {e}")
 
                 # create subscription
                 handler = SubscriptionHandler()
                 subscription = await client.create_subscription(1000, handler)
                 await subscription.subscribe_data_change(nodes)
-                logger.info(f"[INFO] Subscribed to {len(nodes)} nodes. Monitoring...")
+                logger.info(f"Subscribed to {len(nodes)} nodes. Monitoring...")
 
                 # do nothing after subscription
                 while True:
                     await asyncio.sleep(1)
 
         except Exception as e:
-            logger.warning(f"[WARN] Connection failed: {e}. Retrying in 2 seconds...")
+            logger.warning(f"Connection failed: {e}. Retrying in 2 seconds...")
             await asyncio.sleep(2)
 
 # start both tasks
