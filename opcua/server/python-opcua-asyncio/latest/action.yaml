@@ -1,0 +1,64 @@
+# action.yml
+name: 'OPC UA Python Base Server'
+description: 'starts a base server of a NodeSet2.xml file'
+
+inputs:
+  default-opc-port:  
+    description: 'The default port to publish, if the server needs to be exposed to the host interface'
+    required: false
+    default: '4840'
+  service-network:  
+    description: 'the custom docker network to run opc commands to'
+    required: false
+    default: ''
+  model-abspath: 
+    description: 'The host path used to mount model files into the runner '
+    required: false
+    default: ''
+  export-ports: 
+    description: 'Flag to export ports to 0.0.0.0 '
+    required: false
+    default: ''
+  logging-delay: 
+    description: 'Time to wait for the container start, to capture logs from the server daemon'
+    required: false
+    default: ''
+    
+outputs:
+  cid:
+    description: Container ID of the new service container 
+    value: ${{ steps.exec.outputs.cid }}
+
+runs:
+  using: composite
+  steps:
+    - name: Build
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        echo "::group::Building Image for Pyhton OPC Server"
+        ./docker-build.sh
+        echo "::endgroup::"
+
+    - name: Check the networking configuration for the docker service 
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        echo "::group::Setting up Network Configuration for the local runner"
+        ./network-setup.sh ${{ inputs.service-network }}
+        echo "::endgroup::"
+
+    - name: Run the service container 
+      shell: bash
+      id: exec
+      working-directory: ${{ github.action_path }}
+      env: 
+        CUSTOM_OPC_PORT: ${{ inputs.default-opc-port }}
+        ACTION_SERVICE_NETWORK: ${{ inputs.service-network }}
+        ACTION_MODEL_ABSPATH: ${{ inputs.model-abspath }}
+        EXPORT_CONTAINER_PORTS: ${{ inputs.export-ports }}
+        DEFAULT_LOG_WAIT_DELAY: ${{ inputs.logging-delay }}
+      run: |
+        echo "::group::Starting the Python Server in the background"
+        ./docker-run.sh 
+        echo "::endgroup::"

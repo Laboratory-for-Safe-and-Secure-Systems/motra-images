@@ -1,0 +1,19 @@
+[project]
+name = "opc-test"
+version = "1.0"
+description = "test python"
+authors = [
+    {name = "help"}
+]
+license = {text = "mit"}
+readme = "README.md"
+requires-python = ">=3.10"
+package-mode = false
+dependencies = [
+    "asyncua @ git+https://github.com/FreeOpcUa/opcua-asyncio.git@v1.1.6f"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
