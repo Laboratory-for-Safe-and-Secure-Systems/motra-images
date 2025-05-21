@@ -9,7 +9,9 @@ from tank import Tank
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-FILL_LEVEL_PATH = "1:TankV001/1:Measurement/1:FillLevel/1:Percent"
+DEFAULT_NAMESPACE = "1"
+FILL_LEVEL_PATH = "{0}:Devices/{0}:Sensors/{0}:S001/{0}:Measurement/{0}:FillLevel/{0}:Percent".format(
+                  DEFAULT_NAMESPACE)
 
 async def main(server_uri: str):
     sim_step = .1
@@ -49,7 +51,6 @@ async def main(server_uri: str):
                     measured_flow = pump1.get_flow()
                     tank1.calculate_new_fill_level([measured_flow], [static_outflow])
                     await node.write_value(tank1.fill_pct)
-
                     # Ensure minimal loop time
                     await waiting_task
 
