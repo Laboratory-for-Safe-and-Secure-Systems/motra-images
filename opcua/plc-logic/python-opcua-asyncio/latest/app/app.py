@@ -11,17 +11,27 @@ logger = logging.getLogger(__name__)
 # global queue to buffer incoming updates
 value_queue = asyncio.Queue()
 
+# custom namespace
+DEFAULT_NAMESPACE = 1
+
 # node paths on lss
-LSS_FILL_LEVEL_PATH = f"1:TankV001/1:Measurement/1:FillLevel/1:Percent"
+LSS_FILL_LEVEL_PATH = "{0}:Devices/{0}:Sensors/{0}:S001/{0}:Measurement/{0}:FillLevel/{0}:Percent".format(
+                      DEFAULT_NAMESPACE)
 
 # node paths on vs
-VS_VALVE_POS_PATH = f"1:ActuatorF001/1:Valve/1:Output"
+VS_VALVE_POS_PATH = "{0}:Devices/{0}:Valves/{0}:V001/{0}:Output/{0}:D1/{0}:Active".format(
+                    DEFAULT_NAMESPACE)
 
 # node paths on ps
-PS_UPPER_LIMIT_PATH = f""
-PS_LOWER_LIMIT_PATH = f""
-PS_FILL_LEVEL_PATH = f"1:TankV001/1:Measurement/1:FillLevel/1:Percent"
-PS_VALVE_POS_PATH = f""
+PS_UPPER_LIMIT_PATH = "{0}:Devices/{0}:Tanks/{0}:T001/{0}:Configuration/{0}:MaxLevelPercent".format(
+        DEFAULT_NAMESPACE)
+PS_LOWER_LIMIT_PATH = "{0}:Devices/{0}:Tanks/{0}:T001/{0}:Configuration/{0}:MinLevelPercent".format(
+        DEFAULT_NAMESPACE)
+
+PS_FILL_LEVEL_PATH = "{0}:Devices/{0}:Sensors/{0}:S001/{0}:Measurement/{0}:FillLevel/{0}:Percent".format(
+                     DEFAULT_NAMESPACE)
+PS_VALVE_POS_PATH = "{0}:Devices/{0}:Valves/{0}:V001/{0}:Output/{0}:D1/{0}:Active".format(
+                    DEFAULT_NAMESPACE)
 
 # task 1/2 evaluates value changes and contains logic
 async def eval_task(vs_uri: str, ps_uri: str):
@@ -53,13 +63,13 @@ async def eval_task(vs_uri: str, ps_uri: str):
 
                     # open valve if it is closed and enough water is in the tank
                     if not valve_pos and new_fill_level >= upper_limit:
-                        await ps_valve_pos.write(1) # Maybe change to boolean
-                        await vs_valve_pos.write(1) # same here
+                        await ps_valve_pos.write_value(True)
+                        await vs_valve_pos.write_value(True)
         
                     # and close valve if it is open and not enough water is left in the tank
                     elif valve_pos and new_fill_level <= lower_limit:
-                        await ps_valve_pos.write(0) # Maybe change to boolean
-                        await vs_valve_pos.write(0) # same here
+                        await ps_valve_pos.write_value(False)
+                        await vs_valve_pos.write_value(False)
 
         except Exception as e:
             logger.warning(f"Connection failed: {e}. Retrying in 2 seconds...")

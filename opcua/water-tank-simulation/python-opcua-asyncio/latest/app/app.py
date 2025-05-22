@@ -9,7 +9,10 @@ from tank import Tank
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-DEFAULT_NAMESPACE = "1"
+# custom namespace
+DEFAULT_NAMESPACE = 1
+
+# node paths
 FILL_LEVEL_PATH = "{0}:Devices/{0}:Sensors/{0}:S001/{0}:Measurement/{0}:FillLevel/{0}:Percent".format(
                   DEFAULT_NAMESPACE)
 

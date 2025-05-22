@@ -21,18 +21,24 @@ logger = logging.getLogger(__name__)
 # contains tuples with (nodeid, value)
 setter_queue = asyncio.Queue()
 
-# TODO: add the other nodes
+# custom namespace
+DEFAULT_NAMESPACE = 1
+
 # maps node paths to deques
 # the deques buffer a number of maxlen values for the visualization
 node_buffers = {
-    f"1:TankV001/1:Measurement/1:FillLevel/1:Percent": deque(maxlen=100),
+    "{0}:Devices/{0}:Sensors/{0}:S001/{0}:Measurement/{0}:FillLevel/{0}:Percent".format(
+        DEFAULT_NAMESPACE): deque(maxlen=100),
+    "{0}:Devices/{0}:Valves/{0}:V001/{0}:Output/{0}:D1/{0}:Active".format(
+        DEFAULT_NAMESPACE): deque(maxlen=100),
 }
 
-# TODO: min max level should belong to tank, but not yet implemented
-# TODO: also not writable
 # list of setable nodes
 settable_nodes = [
-    f"1:TankV001/1:Measurement/1:FillLevel/1:Absolute",
+    "{0}:Devices/{0}:Tanks/{0}:T001/{0}:Configuration/{0}:MaxLevelPercent".format(
+        DEFAULT_NAMESPACE),
+    "{0}:Devices/{0}:Tanks/{0}:T001/{0}:Configuration/{0}:MinLevelPercent".format(
+        DEFAULT_NAMESPACE),
 ]
 
 # maps path to resolved nodeids

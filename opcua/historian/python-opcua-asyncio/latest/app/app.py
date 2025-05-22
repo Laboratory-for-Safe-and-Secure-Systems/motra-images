@@ -12,10 +12,19 @@ logger = logging.getLogger(__name__)
 # global queue to buffer incoming updates
 value_queue = asyncio.Queue()
 
-# TODO: add the other nodes
+# custom namespace
+DEFAULT_NAMESPACE = 1
+
 # maps node paths to db table
 NODE_CONFIGS = [
-    (f"2:TankV001/2:Measurement/2:FillLevel/2:Percent", "tank_water_level"),
+    ("{0}:Devices/{0}:Sensors/{0}:S001/{0}:Measurement/{0}:FillLevel/{0}:Percent".format(
+        DEFAULT_NAMESPACE), "tank_water_level"),
+    ("{0}:Devices/{0}:Valves/{0}:V001/{0}:Output/{0}:D1/{0}:Active".format(
+        DEFAULT_NAMESPACE), "chemical_valve_pos"),
+    ("{0}:Devices/{0}:Tanks/{0}:T001/{0}:Configuration/{0}:MaxLevelPercent".format(
+        DEFAULT_NAMESPACE), "upper_limit"),
+    ("{0}:Devices/{0}:Tanks/{0}:T001/{0}:Configuration/{0}:MinLevelPercent".format(
+        DEFAULT_NAMESPACE), "lower_limit"),
 ]
 
 # maps node ids to db table after requesting them
@@ -28,7 +37,8 @@ async def db_writer_task(database: str):
         try:
             while True:
                 table, value = await value_queue.get()
-                await db.execute(f"INSERT INTO {table} (pct) VALUES (?)", (value,))
+                col_name = "position" if table == "chemical_valve_pos" else "pct"
+                await db.execute(f"INSERT INTO {table} ({col_name}) VALUES (?)", (value,))
                 await db.commit()
         except asyncio.TimeoutError as e:
             logger.error(f"Timeout error during write: {e}. Skipping...")
