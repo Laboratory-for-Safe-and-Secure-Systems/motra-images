@@ -88,7 +88,7 @@ async def main(server_uri: str):
                 # wait for set signals and write them
                 while True:
                     nodeid, value = await setter_queue.get()
-                    await nodeid.write_value(value)
+                    await nodeid.write_value(float(value))
 
         except Exception as e:
             logger.warning(f"Connection failed: {e}. Retrying in 2 seconds...")
@@ -145,6 +145,9 @@ def start_visualization():
     )
     def set_value(n_clicks, selected_signal, value):
         if n_clicks > 0 and value is not None:
+            if selected_signal.endswith("Percent") and not (0. <= value <= 100.):
+                return f"Invalid value: {value}. Must be between 0 and 100."
+
             # we do the lookup here to keep the main loop as free as possible
             setter_queue.put_nowait((path_to_nodeid[selected_signal], value))
             return f"Requested to set {selected_signal} to {value}"
