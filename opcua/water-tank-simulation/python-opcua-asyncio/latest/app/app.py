@@ -18,7 +18,7 @@ FILL_LEVEL_PATH = "{0}:Devices/{0}:Sensors/{0}:S001/{0}:Measurement/{0}:FillLeve
 
 async def main(server_uri: str):
     sim_step = .1
-    static_outflow = 40
+    static_outflow = 400
 
     tank1 = Tank(name = 'tank1',
                  volume_m3 = 1000,
@@ -29,7 +29,7 @@ async def main(server_uri: str):
                  sim_step_s=sim_step)
 
     pump1 = Pump(name='pump1',
-                 nominal_flow_rate_lps = 60,
+                 nominal_flow_rate_lps = 600,
                  sim_step = sim_step)
 
     # auto-reconnect to server in any case

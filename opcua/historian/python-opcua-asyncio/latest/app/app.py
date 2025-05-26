@@ -18,17 +18,17 @@ DEFAULT_NAMESPACE = 1
 # maps node paths to db table
 NODE_CONFIGS = [
     ("{0}:Devices/{0}:Sensors/{0}:S001/{0}:Measurement/{0}:FillLevel/{0}:Percent".format(
-        DEFAULT_NAMESPACE), "tank_water_level"),
+        DEFAULT_NAMESPACE), "tank_water_level", "pct"),
     ("{0}:Devices/{0}:Valves/{0}:V001/{0}:Output/{0}:D1/{0}:Active".format(
-        DEFAULT_NAMESPACE), "chemical_valve_pos"),
+        DEFAULT_NAMESPACE), "chemical_valve_pos", "position"),
     ("{0}:Devices/{0}:Tanks/{0}:T001/{0}:Configuration/{0}:MaxLevelPercent".format(
-        DEFAULT_NAMESPACE), "upper_limit"),
+        DEFAULT_NAMESPACE), "upper_limit", "pct"),
     ("{0}:Devices/{0}:Tanks/{0}:T001/{0}:Configuration/{0}:MinLevelPercent".format(
-        DEFAULT_NAMESPACE), "lower_limit"),
+        DEFAULT_NAMESPACE), "lower_limit", "pct"),
 ]
 
 # maps node ids to db table after requesting them
-nodeid_to_table = {}
+nodeid_to_config = {}
 
 # task 1/2 writes to db from queue
 async def db_writer_task(database: str):
@@ -36,9 +36,8 @@ async def db_writer_task(database: str):
         logger.info(f"Connected to database")
         try:
             while True:
-                table, value = await value_queue.get()
-                col_name = "position" if table == "chemical_valve_pos" else "pct"
-                await db.execute(f"INSERT INTO {table} ({col_name}) VALUES (?)", (value,))
+                (table, col), value = await value_queue.get()
+                await db.execute(f"INSERT INTO {table} ({col}) VALUES (?)", (value,))
                 await db.commit()
         except asyncio.TimeoutError as e:
             logger.error(f"Timeout error during write: {e}. Skipping...")
@@ -47,7 +46,7 @@ async def db_writer_task(database: str):
 class SubscriptionHandler:
     def datachange_notification(self, node, value, data):
         if value:
-            value_queue.put_nowait((nodeid_to_table[node], value))
+            value_queue.put_nowait((nodeid_to_config[node], value))
 
 # task 2/2 which subscribes to server
 async def client_task(server_uri: str):
@@ -58,12 +57,12 @@ async def client_task(server_uri: str):
             async with Client(url=server_uri) as client:
                 # Resolve NodeIds from browse paths
                 nodes = []
-                for path, table in NODE_CONFIGS:
+                for path, table, col in NODE_CONFIGS:
                     try:
                         node = await client.nodes.objects.get_child(path)
                         logger.info(f"Resolved {path} -> {node.nodeid}")
                         nodes.append(node)
-                        nodeid_to_table[node] = table
+                        nodeid_to_config[node] = (table, col)
                     except Exception as e:
                         logger.error(f"Failed to resolve {path}: {e}")
 
