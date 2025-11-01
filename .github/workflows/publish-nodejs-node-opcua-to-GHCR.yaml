@@ -1,9 +1,6 @@
-name: pkg Release open62541 to GHCR
+name: pkg Release NodeJS node-opcua to GHCR
 
 # manual workflow, alternatively when generating new tags for the release
-# the main schedule is set to the 3rd of each month at 02:30am
-# to create monthly updated images
-# the tags are used to create a new release when a new version is created
 on:
   schedule:
      - cron: "30 2 3 * *"
@@ -11,20 +8,19 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
-  # manual setup ...
 
 # annotation keys are explained here for metadata related infos:
 # https://github.com/opencontainers/image-spec/blob/main/annotations.md
 
 jobs:
-  publish-open62541-server:
+  publish-node-server:
     runs-on: ubuntu-latest
 
     permissions:
       packages: write
       contents: read
 
-    name: Package and Publish open62541
+    name: Package and Publish Node
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,23 +31,22 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.actor }}/c-server
+          images: ghcr.io/${{ github.actor }}/node-server
           tags: | 
             type=raw,value=latest
           labels: |
             maintainer=Frozenbitz
             org.opencontainers.image.authors=Frozenbitz
-            org.opencontainers.image.title=KRITIS3M-open62541-server
+            org.opencontainers.image.title=KRITIS3M-node-server
             org.opencontainers.image.description=A OPC UA test server preconfigured to run a custom NodeSet2.xml for pentesting
-            org.opencontainers.image.documentation=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/server/c-open62541/latest/README.md
-            org.opencontainers.image.url=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/server/c-open62541/latest
+            org.opencontainers.image.documentation=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/server/nodejs-node-opcua/latest/README.md
+            org.opencontainers.image.url=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/server/nodejs-node-opcua/latest
           annotations: |
             org.opencontainers.image.authors=Frozenbitz
-            org.opencontainers.image.title=KRITIS3M-open62541-server
+            org.opencontainers.image.title=KRITIS3M-node-server
             org.opencontainers.image.description=A OPC UA test server preconfigured to run a custom NodeSet2.xml for pentesting
-            org.opencontainers.image.documentation=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/server/c-open62541/latest/README.md
-            org.opencontainers.image.url=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/server/c-open62541/latest
-
+            org.opencontainers.image.documentation=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/server/nodejs-node-opcua/latest/README.md
+            org.opencontainers.image.url=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/server/nodejs-node-opcua/latest
 
       - name: Login to ghcr.io
         uses: docker/login-action@v3
@@ -69,14 +64,11 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ${{ github.workspace }}/opcua/server/c-open62541/latest
+          context: ${{ github.workspace }}/opcua/server/nodejs-node-opcua/latest
           build-args: |
             NODESET_MODEL=FullSystem.NodeSet2.xml
-            OPEN62541_VERSION=v1.4.11
-            UA_LOGLEVEL=600
-            UA_DEBUG=OFF
           build-contexts: |
-            container_context=${{ github.workspace }}/opcua/server/c-open62541/latest
+            container_context=${{ github.workspace }}/opcua/server/nodejs-node-opcua/latest
             nodeset_context=${{ github.workspace }}/meta/demo-nodeset2
             companion_context=${{ github.workspace }}/meta/companion-specifications
           platforms: linux/amd64,linux/arm64
