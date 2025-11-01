@@ -8,6 +8,11 @@ MOTRA is a flexible framework for creating testbeds tailored to the user's needs
 
 Its main features are its modularity and extensibility through packaging testbed components as containerized applications. Docker is the containerization solution of choice. This repository contains the sources for all available images on Dockerhub. There is a [companion](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-setups) repository available which contains ready-to-use testbed setups that uses these images.
 
+## Current State of Module Development
+
+[![pkg Release Python asyncua to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-python-asyncua-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-python-asyncua-to-GHCR.yaml) \
+[![pkg Release open62541 to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-open62541-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-open62541-to-GHCR.yaml)
+
 ## Table of Contents
 
 - [Overview](#overview)
