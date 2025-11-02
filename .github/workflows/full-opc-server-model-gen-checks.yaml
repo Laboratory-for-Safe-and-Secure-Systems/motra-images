@@ -1,0 +1,220 @@
+name: OPC UA Model Generation and Verification
+
+
+# this creates a manual workflow that needs to be activated by REST or on the Actions Page
+on:
+  schedule:
+     - cron: "30 2 3 * *"
+  workflow_dispatch:
+
+jobs:
+  define-models: 
+    runs-on: ubuntu-latest
+
+    # this initial step generates a matrix of outputs to start a defined number of
+    # jobs downstream. this is then used to feed the different servers we built 
+    # with the custom models defined here:
+    outputs:
+      models: ${{ steps.definition.outputs.composite-models }}
+
+    steps:
+      - name: Define OPC UA Information Models to build and test
+        id: definition
+        run: >
+          echo 'composite-models=[
+          "EmptyModel.xml",
+          "FullSystemModel.xml",
+          "PLCModel.xml",
+          "TankModel.xml",
+          "ValveModel.xml"
+          ]'
+          >> "$GITHUB_OUTPUT"
+
+      - name: Generate summary
+        run: |
+          echo "Generating workflows for " >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.definition.outputs.composite-models }}" >> $GITHUB_STEP_SUMMARY
+
+  build-and-generate-model-files:
+    needs: [ define-models ]
+    strategy: 
+      matrix: 
+        models:  ${{ fromJSON(needs.define-models.outputs.models) }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@main
+        with:
+          sparse-checkout: |
+            opcua/tools/model-compiler/
+            meta/schemata/
+            meta/demo-models/
+      
+      - name: Build the Model Compiler and Generate the default set
+        uses: ./opcua/tools/model-compiler/
+        id: model-compiler
+        with:
+          model-abspath: '${{ github.workspace }}/meta/demo-models/${{ matrix.models }}'
+          output-files-location: '${{ github.workspace }}/output' 
+
+      - name: Generate summary
+        run: |
+          echo "Generating NodeSet definitions for " >> $GITHUB_STEP_SUMMARY
+          echo "${{ matrix.models }}" >> $GITHUB_STEP_SUMMARY 
+
+  run-local-python-server:
+    needs: [ build-and-generate-model-files , define-models ]
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        models: ${{ fromJSON(needs.define-models.outputs.models) }}
+
+    steps:
+      # IMPORTANT: this needs to run first, checkout does delete files when executing in a non empty environment
+      - name: checkout scripts required for testing
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            opcua/server/python-opcua-asyncio/latest/
+            meta/companion-specifications/
+            meta/demo-nodeset2/
+
+      - name: Download Model 
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.models }}
+          path: model
+
+      - name: Start local Python Server
+        uses: ./opcua/server/python-opcua-asyncio/latest/
+        id: opc-test
+        env:
+          NODESET_CONTEXT: '${{ github.workspace }}/model/'
+          NODESET_MODEL: 'KRITIS3M.Reference.NodeSet2.xml'
+        with:
+          model-abspath: '${{ github.workspace }}/model/KRITIS3M.Reference.NodeSet2.xml'
+          service-network: '${{ job.container.network }}'
+          export-ports: 'true'
+          logging-delay: '15'
+
+      - name: probing the local ports 
+        run: netstat -tulpn && nc -4 -z 127.0.0.1 4840
+
+  run-local-node-server:
+    needs: [ build-and-generate-model-files , define-models ]
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        models: ${{ fromJSON(needs.define-models.outputs.models) }}
+
+    steps:
+      # IMPORTANT: this needs to run first, checkout does delete files when executing in a non empty environment
+      - name: checkout scripts required for testing
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            opcua/server/nodejs-node-opcua/latest/
+            meta/companion-specifications/
+            meta/demo-nodeset2/
+
+      - name: Download Model 
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.models }}
+          path: model
+
+      - name: Start local Node Server
+        uses: ./opcua/server/nodejs-node-opcua/latest/
+        id: opc-test
+        env:
+          NODESET_CONTEXT: '${{ github.workspace }}/model/'
+          NODESET_MODEL: 'KRITIS3M.Reference.NodeSet2.xml'
+        with:
+          model-abspath: '${{ github.workspace }}/model/KRITIS3M.Reference.NodeSet2.xml'
+          service-network: '${{ job.container.network }}'
+          export-ports: 'true'
+
+      - name: probing the local ports 
+        run: netstat -tulpn && nc -4 -z 127.0.0.1 4840
+
+  run-local-c-server:
+    needs: [ build-and-generate-model-files , define-models ]
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        models: ${{ fromJSON(needs.define-models.outputs.models) }}
+
+    steps:
+      # IMPORTANT: this needs to run first, checkout does delete files when executing in a non empty environment
+      - name: checkout scripts required for testing
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            opcua/server/c-open62541/latest/
+            meta/companion-specifications/
+            meta/demo-nodeset2/
+
+      - name: Download Model 
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.models }}
+          path: model
+
+      - name: Start local C Server
+        uses: ./opcua/server/c-open62541/latest/
+        id: opc-test
+        env:
+          NODESET_CONTEXT: '${{ github.workspace }}/model/'
+          NODESET_MODEL: 'KRITIS3M.Reference.NodeSet2.xml'
+        with:
+          model-abspath: '${{ github.workspace }}/model/KRITIS3M.Reference.NodeSet2.xml'
+          service-network: '${{ job.container.network }}'
+          export-ports: 'true'
+
+      - name: probing the local ports 
+        run: netstat -tulpn && nc -4 -z 127.0.0.1 4840
+
+  run-local-dotnet-server:
+    needs: [ build-and-generate-model-files , define-models ]
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        models: ${{ fromJSON(needs.define-models.outputs.models) }}
+
+    steps:
+      # IMPORTANT: this needs to run first, checkout does delete files when executing in a non empty environment
+      - name: checkout scripts required for testing
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            opcua/server/dotnet-NETStandard/latest/
+            meta/companion-specifications/
+            meta/demo-nodeset2/
+            meta/server-configuration/
+
+      - name: Download Model 
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.models }}
+          path: model
+
+      - name: Start local .NET Server
+        uses: ./opcua/server/dotnet-NETStandard/latest/
+        id: opc-test
+        env:
+          NODESET_CONTEXT: '${{ github.workspace }}/model/'
+          NODESET_MODEL: 'KRITIS3M.Reference.PredefinedNodes.uanodes'
+        with:
+          model-abspath: '${{ github.workspace }}/model/KRITIS3M.Reference.PredefinedNodes.uanodes'
+          service-network: '${{ job.container.network }}'
+          export-ports: 'true'
+
+      - name: probing the local ports 
+        run: netstat -tulpn && nc -4 -z 127.0.0.1 4840
