@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install \
         gcc g++ gdb cpp \
         make cmake \
         libtool \
+        libaudit-common \
+        libaudit1 \
         libc6 \
         autoconf automake pkg-config \
         build-essential \
@@ -60,6 +62,7 @@ RUN curl -sLO "https://ftp.hostserver.de/pub/OpenBSD/OpenSSH/portable/openssh-$O
 # configure server options 
 #RUN  sed -i.bak 's/^#LogLevel INFO$/LogLevel DEBUG3/' /opt/openssh-${OPENSSH_VER}/etc/sshd_config
 
+COPY entrypoint.sh entrypoint.sh
 
 # create aliases to use the client side tools inside the container
 RUN /bin/bash -c "echo $' \n\
@@ -71,5 +74,6 @@ RUN /bin/bash -c "echo $' \n\
 
 EXPOSE 22
 ENV OPENSSH_INSTALL_PATH="/opt/openssh-${OPENSSH_VER}"
-SHELL [ "${OPENSSH_INSTALL_PATH}/sbin/sshd" , "-D" , "-e" ]
+ENTRYPOINT ["/usr/bin/env"]
+CMD ["./entrypoint.sh"]
 
