@@ -131,11 +131,11 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ${{ github.workspace }}/opcua/server/nodejs-node-opcua/latest
+          context: ${{ github.workspace }}/opcua/server/nodejs-node-opcua/cve-2022-21208
           build-args: |
             NODESET_MODEL=FullSystem.NodeSet2.xml
           build-contexts: |
-            container_context=${{ github.workspace }}/opcua/server/nodejs-node-opcua/latest
+            container_context=${{ github.workspace }}/opcua/server/nodejs-node-opcua/cve-2022-21208
             nodeset_context=${{ github.workspace }}/meta/demo-nodeset2
             companion_context=${{ github.workspace }}/meta/companion-specifications
           platforms: linux/amd64,linux/arm64
