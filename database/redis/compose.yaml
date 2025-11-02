@@ -1,0 +1,31 @@
+
+# very basic setup of a redis cache
+
+services:
+  redis:
+    image: redis:latest
+    # the command switch can be used here to enable features, like database sync to file system
+    #command: 'redis-server --save 60 1 --loglevel warning'
+    #
+    container_name: redis-cache
+        
+    restart: unless-stopped
+    # this is the default redis port
+    # can be changed if needed or we just use a docker network and hide the configuration from the outside world
+    ports:
+      - "6379:6379"
+
+    # these should be the most basic configuration files for redis.
+    # we can add these later on to configure our installation
+    #volumes:
+    #- /path/to/local/dаta:/root/redis
+    #- /path/to/local/redis.conf:/usr/local/etc/redis/redis.conf
+
+    # here we have the default credentials setup as part of the environment
+    # In case we want to use the swarm secrets, redis supports the REDIS_PASS_FILE option to use a file instead of a parameter
+    environment:
+      - REDIS_PASSWORD=helloworld
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
+      #- REDIS_PASS_FILE="/run/secrets/redis_pass"
+

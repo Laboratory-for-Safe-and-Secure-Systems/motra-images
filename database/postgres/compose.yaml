@@ -1,0 +1,53 @@
+# Compose file for Postgres Version 16.02
+# 
+#
+services:
+  postgres:
+    image: postgres:16.2 # if needed change the version for postgres
+    container_name: postgres
+    restart: unless-stopped
+    ports:
+     - 5432:5432
+
+    # networks:
+    # - internal
+    # - external
+    
+    # when using secrets, we need to pass the file parameter to postgres 
+    # this way the secret file is parsed and read by the server process
+    #    secrets:
+    #     - pg_admin
+    environment: # the password file is required, if we want to use docker secrets!
+    #      - POSTGRES_PASSWORD_FILE: /run/secrets/pg_admin
+    # otherwise we need additional environment options for the default credentials:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgrespw
+
+    # Postgres has one default configuration volume to store all relevant data for the credentials and initial configuration
+    # If we are only testing, we can skip this. However, this requires initial setup for each new restart of the container!
+    #    volumes:
+    #      - /.../docker-data/postgres-data:/var/lib/postgresql/data
+
+#  pgadmin:
+#    image: dpage/pgadmin4:8.3
+#    container_name: pgadmin-dbg
+#    restart: unless-stopped
+#    networks:
+#     - idp-intern-prod
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: lab@las3.de
+#      PGADMIN_DEFAULT_PASSWORD: strong-password
+#    ports:
+#     - 10580:80
+
+# only required if we want to have a network internal to docker 
+#networks:
+#  internal:
+#    external: true
+#  external:
+#    external: true
+
+# when using swarm, we can encode the initial credentials in a secured file locally
+#secrets:
+#   pg_admin:
+#     file: secrets/postgres_admin

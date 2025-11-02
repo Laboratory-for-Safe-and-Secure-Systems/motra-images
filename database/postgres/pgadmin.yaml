@@ -1,0 +1,16 @@
+# Compose file for Postgres Version 16.02
+#
+#
+services:
+
+  pgadmin:
+    image: dpage/pgadmin4:8.3
+    container_name: pgadmin-dbg
+    restart: unless-stopped
+      #    networks:
+      #     - internal
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@test.com
+      PGADMIN_DEFAULT_PASSWORD: strong-password
+    ports:
+     - 10580:80

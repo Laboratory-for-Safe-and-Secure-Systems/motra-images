@@ -1,0 +1,10 @@
+services: 
+  pgweb:
+    image: sosedoff/pgweb
+      #depends_on:
+      #- postgres
+    environment:
+      PGWEB_DATABASE_URL: postgres://username:password@postgres:5432/database-name?sslmode=disable
+    ports:
+      - 8085:8081
+    restart: on-failure:3

@@ -1,0 +1,18 @@
+services:
+
+  db:
+    image: mariadb
+    restart: always
+    ports: 
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+      MARIADB_USER: example-user
+      MARIADB_PASSWORD: my_cool_secret
+
+# maria db web management tool
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
