@@ -2,9 +2,9 @@
 
 # configure local contexts
 CONTAINER_CONTEXT=${CONTAINER_CONTEXT:-$(realpath .)} 
-NODESET_CONTEXT=${NODESET_CONTEXT:-$(realpath ../../meta/demo-nodeset2/)} 
-COMPANIONSPEC_CONTEXT=${COMPANIONSPEC_CONTEXT:-$(realpath ../../meta/companion-specifications/)} 
-CONFIGURATION_CONTEXT=${CONFIGURATION_CONTEXT:-$(realpath ../../meta/server-configuration/)} 
+NODESET_CONTEXT=${NODESET_CONTEXT:-$(realpath ../../../../meta/demo-nodeset2/)} 
+COMPANIONSPEC_CONTEXT=${COMPANIONSPEC_CONTEXT:-$(realpath ../../../../meta/companion-specifications/)} 
+CONFIGURATION_CONTEXT=${CONFIGURATION_CONTEXT:-$(realpath ../../../../meta/server-configuration/)} 
 
 NODESET_MODEL=${NODESET_MODEL:-"FullSystem.PredefinedNodes.uanodes"} 
 

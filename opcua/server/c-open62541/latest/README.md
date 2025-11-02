@@ -28,8 +28,8 @@ Available parameters:
 ```bash
 # Source file contexts for Docker, can be used to customize models and additional OPC specifications
 export CONTAINER_CONTEXT=$(realpath .)
-export NODESET_CONTEXT=$(realpath ../../meta/demo-nodeset2/)
-export COMPANIONSPEC_CONTEXT=$(realpath ../../meta/companion-specifications/) 
+export NODESET_CONTEXT=$(realpath ../../../../meta/demo-nodeset2/)
+export COMPANIONSPEC_CONTEXT=$(realpath ../../../../meta/companion-specifications/) 
 ``` 
 
 ```bash

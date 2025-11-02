@@ -2,8 +2,8 @@
 
 # configure local contexts
 CONTAINER_CONTEXT=${CONTAINER_CONTEXT:-$(realpath .)} 
-NODESET_CONTEXT=${NODESET_CONTEXT:-$(realpath ../../meta/demo-nodeset2/)} 
-COMPANIONSPEC_CONTEXT=${COMPANIONSPEC_CONTEXT:-$(realpath ../../meta/companion-specifications/)} 
+NODESET_CONTEXT=${NODESET_CONTEXT:-$(realpath ../../../../meta/demo-nodeset2/)} 
+COMPANIONSPEC_CONTEXT=${COMPANIONSPEC_CONTEXT:-$(realpath ../../../../meta/companion-specifications/)} 
 
 NODESET_MODEL=${NODESET_MODEL:-"FullSystem.NodeSet2.xml"} 
 OPEN62541_VERSION=${OPEN62541_VERSION:-"v1.4.11"} 

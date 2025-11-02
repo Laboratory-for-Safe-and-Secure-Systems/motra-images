@@ -27,16 +27,16 @@ Customization of the generic server is done with the environment options:
 
 ```bash
 export CONTAINER_CONTEXT=$(realpath .) 
-export NODESET_CONTEXT=$(realpath ../../meta/demo-nodeset2/) 
-export COMPANIONSPEC_CONTEXT=$(realpath ../../meta/companion-specifications/)
-export CONFIGURATION_CONTEXT=$(realpath ../../meta/server-configuration/s
+export NODESET_CONTEXT=$(realpath ../../../../meta/demo-nodeset2/) 
+export COMPANIONSPEC_CONTEXT=$(realpath ../../../../meta/companion-specifications/)
+export CONFIGURATION_CONTEXT=$(realpath ../../../../meta/server-configuration/)
 export NODESET_MODEL="FullSystem.PredefinedNodes.uanodes"
 ```
 
 Start the default container to run a local .NET server with exposed ports on localhost/0.0.0.0:4840 
 
 ```bash
-export ACTION_MODEL_ABSPATH="$(realpath ../../meta/demo-nodeset2/)/FullSystem.PredefinedNodes.uanodes"
+export ACTION_MODEL_ABSPATH="$(realpath ../../../../meta/demo-nodeset2/)/FullSystem.PredefinedNodes.uanodes"
 export CUSTOM_OPC_PORT=4840
 ./docker-run.sh
 ```

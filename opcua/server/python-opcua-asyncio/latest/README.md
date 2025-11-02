@@ -31,7 +31,7 @@ The default build can be started using docker build.
 Start the default container to run a local python server with exposed ports on localhost/0.0.0.0: 
 
 ```bash
-export ACTION_MODEL_ABSPATH="$(realpath ../../meta/demo-nodeset2)/FullSystem.NodeSet2.xml"
+export ACTION_MODEL_ABSPATH="$(realpath ../../../../meta/demo-nodeset2)/FullSystem.NodeSet2.xml"
 export EXPORT_CONTAINER_PORTS=true
 ./docker-run.sh
 ```
