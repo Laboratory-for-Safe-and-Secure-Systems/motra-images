@@ -9,10 +9,18 @@ MOTRA is a flexible framework for creating testbeds tailored to the user's needs
 Its main features are its modularity and extensibility through packaging testbed components as containerized applications. Docker is the containerization solution of choice. This repository contains the sources for all available images on Dockerhub. There is a [companion](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-setups) repository available which contains ready-to-use testbed setups that uses these images.
 
 ## Current State of Module Development
+
+__OPC Servers__ \
 [![pkg Release UA Standard dotnet to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-dotnet-UAStandard-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-dotnet-UAStandard-to-GHCR.yaml) \
 [![pkg Release NodeJS node-opcua to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-nodejs-node-opcua-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-nodejs-node-opcua-to-GHCR.yaml) \
 [![pkg Release Python asyncua to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-python-asyncua-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-python-asyncua-to-GHCR.yaml) \
 [![pkg Release open62541 to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-open62541-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-open62541-to-GHCR.yaml)
+
+__Simulation and Demo Models__ \
+[![OPC UA Model Generation and Verification](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/full-opc-server-model-gen-checks.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/full-opc-server-model-gen-checks.yaml)
+
+__Model Compiler, Source Generator__ \
+...
 
 ## Table of Contents
 
