@@ -1,4 +1,4 @@
-name: pkg Build openssh
+name: pkg Build mongoose
 
 on:
   schedule:
