@@ -20,7 +20,7 @@ __Simulation and Demo Models__ \
 [![OPC UA Model Generation and Verification](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/full-opc-server-model-gen-checks.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/full-opc-server-model-gen-checks.yaml)
 
 __Model Compiler, Source Generator__ \
-...
+[![model-compiler Build and pkg Release](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-test-UA-model-compiler.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-test-UA-model-compiler.yaml)
 
 ## Table of Contents
 
