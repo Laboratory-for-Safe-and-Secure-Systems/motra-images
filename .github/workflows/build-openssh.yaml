@@ -1,4 +1,4 @@
-name: pkg Release openssh to GHCR
+name: pkg Build openssh
 
 on:
   schedule:
@@ -31,7 +31,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ${{ github.workspace }}/remote/ssh/openssh
-          file: CustomBuild.Dockerfile
+          file: ${{ github.workspace }}/remote/ssh/openssh/CustomBuild.Dockerfile
           platforms: linux/amd64,linux/arm64
           push: false
           tags: ${{ steps.meta.outputs.tags }}
