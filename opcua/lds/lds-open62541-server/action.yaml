@@ -1,0 +1,50 @@
+# action.yml
+name: 'OPC UA Open62541 LDS Server'
+description: 'runs a vanilla open62541 lds server'
+
+inputs:
+  service-network:  
+    description: 'the custom docker network to connect this instance to'
+    required: false
+    default: ''
+  lds-version:  
+    description: 'the build version to choose from the configured source repository'
+    required: false
+    default: 'v1.4.11'
+
+outputs:
+  cid:
+    description: Container ID of the new service container 
+    value: ${{ steps.exec.outputs.cid }}
+
+runs:
+  using: composite
+  steps:
+    - name: Build
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      env:
+        UA_LOGLEVEL: 100
+        OPEN62541_VERSION: "v1.4.11"
+        UA_DEBUG: "ON"
+      run: |
+        echo "::group::Building Image for C/C++ OPC Server"
+        ./docker-build.sh
+        echo "::endgroup::"
+
+    - name: Check the networking configuration for the docker service 
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        echo "::group::Setting up Network Configuration for the local runner"
+        ./network-setup.sh ${{ inputs.service-network }}
+        echo "::endgroup::"
+
+    - name: Run the service container 
+      shell: bash
+      id: exec
+      working-directory: ${{ github.action_path }}
+      run: |
+        echo "::group::Starting the C/C++ Server in the background"
+        ./docker-run.sh 
+        echo "::endgroup::"
