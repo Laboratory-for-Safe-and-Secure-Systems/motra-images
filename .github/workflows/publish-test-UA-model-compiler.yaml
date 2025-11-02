@@ -1,0 +1,161 @@
+name: model-compiler Build and pkg Release
+# description: 
+# this workflow is used to build the packaged model compiler from scratch and run a single 
+# model through the pipeline, to check whether the build performs as intended
+# In the recent version, we added xmllint to parse the input and output files against
+# publicly available xsd files. 
+
+# manual workflow
+on:
+  schedule:
+     - cron: "30 2 3 * *"
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  Build-Sanity-Check-OPC:
+    runs-on: ubuntu-latest
+
+    name: Run the Sanity Check OPC build
+    steps:
+      - name: Checkout OPC UA Model Compiler (and all additional modules to build the default model)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            opcua/tools/model-compiler/
+            meta/schemata/
+            meta/demo-models/
+
+      # load the local action and run the sanity client against the service server by iotechsys 
+      - name: Build the Model Compiler and Generate the default set
+        uses: ./opcua/tools/model-compiler/
+        id: compiler-test
+        with:
+          model-abspath: '${{ github.workspace }}/meta/demo-models/FullSystemModel.xml'
+          output-files-location: '${{ github.workspace }}/output' 
+        
+      - name: Generate summary
+        run: |
+          echo "Built testing Nodeset for the reference model " >> $GITHUB_STEP_SUMMARY
+
+  Generate-v105:
+    runs-on: ubuntu-latest
+
+    name: Generate v105 Sources and XML files
+    steps:
+      - name: Checkout OPC UA Model Compiler (and all additional modules to build the default model)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            opcua/tools/model-compiler/
+            meta/schemata/
+            meta/demo-models/
+
+      # load the local action and run the sanity client against the service server by iotechsys 
+      - name: Build the Model Compiler and Generate the default set
+        uses: ./opcua/tools/model-compiler/
+        id: compiler-test
+        with:
+          model-abspath: '${{ github.workspace }}/meta/demo-models/FullSystemModel.xml'
+          output-files-location: '${{ github.workspace }}/output'  
+          opc-standard-version: 'v105'
+          artifact-name-override: 'v105-model'
+
+      - name: Generate summary
+        run: |
+          echo "Built testing Nodeset for v1.05 OPC " >> $GITHUB_STEP_SUMMARY
+          
+  Generate-v104:
+    runs-on: ubuntu-latest
+
+    name: Generate v104 Sources and XML files
+    steps:
+      - name: Checkout OPC UA Model Compiler (and all additional modules to build the default model)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            opcua/tools/model-compiler/
+            meta/schemata/
+            meta/demo-models/
+
+      # load the local action and run the sanity client against the service server by iotechsys 
+      - name: Build the Model Compiler and Generate the default set
+        uses: ./opcua/tools/model-compiler/
+        id: compiler-test
+        with:
+          model-abspath: '${{ github.workspace }}/meta/demo-models/FullSystemModel.xml'
+          output-files-location: '${{ github.workspace }}/output'  
+          opc-standard-version: 'v104' 
+          artifact-name-override: 'v104-model'
+
+      - name: Generate summary
+        run: |
+          echo "Built testing Nodeset for v1.04 OPC " >> $GITHUB_STEP_SUMMARY
+
+
+  publish-model-compiler:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: read
+
+    name: Package and Publish UA model compiler 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+# the licenses are fetched from the local git repository somehow...
+# we dont need to setup a license field as part of the labels
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/laboratory-for-safe-and-secure-systems/model-compiler
+          tags: | 
+            type=raw,value=latest
+          labels: |
+            maintainer=Frozenbitz
+            org.opencontainers.image.authors=Frozenbitz
+            org.opencontainers.image.title=Packaged UA Model Compiler
+            org.opencontainers.image.description=A custom container to generate and validate models for the MOTRA simulations
+            org.opencontainers.image.documentation=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/tools/model-compiler/README.md
+            org.opencontainers.image.url=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/tools/model-compiler
+          annotations: |
+            maintainer=Frozenbitz
+            org.opencontainers.image.authors=Frozenbitz
+            org.opencontainers.image.title=Packaged UA Model Compiler
+            org.opencontainers.image.description=A custom container to generate and validate models for the MOTRA simulations
+            org.opencontainers.image.documentation=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/tools/model-compiler/README.md
+            org.opencontainers.image.url=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/opcua/tools/model-compiler
+
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}/opcua/tools/model-compiler
+          build-args: |
+            UA_COMPILER_GIT_REF=master
+          build-contexts: |
+            container_context=${{ github.workspace }}/opcua/tools/model-compiler
+            schema_context=${{ github.workspace }}/meta/schemata
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
