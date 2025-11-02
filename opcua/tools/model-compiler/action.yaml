@@ -1,0 +1,72 @@
+# action.yml
+name: 'OPC UA custom Model Compiler'
+description: 'Can be used to generate a NodeSet2.xml file from a model description'
+
+inputs:
+  model-abspath:  
+    description: 'The absolute patht to an XML model to generate a 
+                  NodeSet defintion to. This will be mounted into the container'
+    required: true
+    default: ''
+  output-files-location:
+    description: 'Location of to place the generated artifacts'
+    required: true
+    default: '${{ github.action_path }}/output'
+  opc-standard-version:  
+    description: 'The OPC Standard version to generate code to; defaults to 1.04'
+    required: false
+    default: 'v105'
+  artifact-name-override:
+    description: 'Alternative name when generating output'
+    required: false
+    default: ''
+  artifact-retention-time:
+    description: 'time in days to keep the generated files on the github servers'
+    required: false
+    default: '40'
+  # ToDo: add schema locations, if needed
+
+runs:
+  using: composite
+  steps:
+    - name: Buildindg Image
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        echo "::group::Building Image for UA Model Compiler"
+        ./docker-build.sh
+        echo "::endgroup::"
+
+    - name: Generate NodeSet from Model File
+      shell: bash
+      id: builder
+      working-directory: ${{ github.action_path }}
+      env: 
+        ACTION_MODEL_ABSPATH: ${{ inputs.model-abspath }}
+        ACTION_OUTPUT_LOCATION: ${{ inputs.output-files-location }}
+        OPC_STANDARD_VERSION: ${{ inputs.opc-standard-version }}
+      run: |
+        echo "::group::Generating NodeSet2.xml"
+        ./docker-run.sh 
+        echo "::endgroup::"
+
+    - name: get the name of the output artifact
+      shell: bash
+      id: name
+      working-directory: ${{ github.action_path }}
+      run: | 
+        if [ "${{ inputs.artifact-name-override }}" == "" ]; then
+          MODEL_NAME=$(basename ${{ inputs.model-abspath }})
+          echo "artifact-name=${MODEL_NAME}" >> "$GITHUB_OUTPUT"
+        else
+          echo "overriding artifact name for uploading to ${{ inputs.artifact-name-override }}"
+          echo "artifact-name=${{ inputs.artifact-name-override }}" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: upload the generated NodeSet2.xml files 
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.name.outputs.artifact-name }}
+        path:  ${{ inputs.output-files-location }}
+        if-no-files-found: error 
+        retention-days: ${{ inputs.artifact-retention-time }}
