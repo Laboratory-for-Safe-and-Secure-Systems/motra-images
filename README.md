@@ -16,6 +16,10 @@ __OPC Servers__ \
 [![pkg Release Python asyncua to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-python-asyncua-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-python-asyncua-to-GHCR.yaml) \
 [![pkg Release open62541 to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-open62541-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-open62541-to-GHCR.yaml)
 
+__LDS Servers__ \
+[![pkg Release UA Standard LDS to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-lds-UA-standard-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-lds-UA-standard-to-GHCR.yaml) \
+[![pkg Release open62541 LDS to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-lds-open62541-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-lds-open62541-to-GHCR.yaml)
+
 __Simulation and Demo Models__ \
 [![OPC UA Model Generation and Verification](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/full-opc-server-model-gen-checks.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/full-opc-server-model-gen-checks.yaml)
 
