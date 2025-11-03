@@ -1,0 +1,129 @@
+name: pkg Release openssh to GHCR
+
+on:
+  schedule:
+     - cron: "30 2 3 * *"
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish-openssh-server:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: read
+
+    name: Package and Publish openssh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/laboratory-for-safe-and-secure-systems/openssh
+          tags: | 
+            type=raw,value=latest
+          labels: |
+            maintainer=Frozenbitz
+            org.opencontainers.image.authors=Frozenbitz
+            org.opencontainers.image.title=KRITIS3M-openssh-server
+            org.opencontainers.image.description=A custom built openssh server, that can be extended or downgraded to expose configuration issues and vulnerabilities inside the testbed.
+            org.opencontainers.image.documentation=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/remote/ssh/openssh/README.md
+            org.opencontainers.image.url=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/remote/ssh/openssh
+          annotations: |
+            maintainer=Frozenbitz
+            org.opencontainers.image.authors=Frozenbitz
+            org.opencontainers.image.title=KRITIS3M-openssh-server
+            org.opencontainers.image.description=A custom built openssh server, that can be extended or downgraded to expose configuration issues and vulnerabilities inside the testbed.
+            org.opencontainers.image.documentation=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/remote/ssh/openssh/README.md
+            org.opencontainers.image.url=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/remote/ssh/openssh
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}/remote/ssh/openssh
+          file: ${{ github.workspace }}/remote/ssh/openssh/CustomBuild.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+
+
+  publish-cve-2019-6111-server:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: read
+
+    name: Package and Publish openssh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/laboratory-for-safe-and-secure-systems/cve-2019-6111
+          tags: | 
+            type=raw,value=latest
+          labels: |
+            maintainer=Frozenbitz
+            org.opencontainers.image.authors=Frozenbitz
+            org.opencontainers.image.title=KRITIS3M-cve-2019-6111-server
+            org.opencontainers.image.cve=CVE-2019-6111
+            org.opencontainers.image.description=A custom built openssh server, that can be extended or downgraded to expose configuration issues and vulnerabilities inside the testbed.
+            org.opencontainers.image.documentation=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/remote/ssh/openssh/README.md
+            org.opencontainers.image.url=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/remote/ssh/openssh
+          annotations: |
+            maintainer=Frozenbitz
+            org.opencontainers.image.authors=Frozenbitz
+            org.opencontainers.image.title=KRITIS3M-cve-2019-6111-server
+            org.opencontainers.image.cve=CVE-2019-6111
+            org.opencontainers.image.description=A custom built openssh server, that can be extended or downgraded to expose configuration issues and vulnerabilities inside the testbed.
+            org.opencontainers.image.documentation=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/remote/ssh/openssh/README.md
+            org.opencontainers.image.url=https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/blob/main/remote/ssh/openssh
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ github.workspace }}/remote/ssh/openssh
+          file: ${{ github.workspace }}/remote/ssh/openssh/CVE-2019-6111.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
