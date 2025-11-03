@@ -26,6 +26,9 @@ __Simulation and Demo Models__ \
 __Model Compiler, Source Generator__ \
 [![model-compiler Build and pkg Release](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-test-UA-model-compiler.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-test-UA-model-compiler.yaml)
 
+__Custom Components__
+[![pkg Release openssh to GHCR](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-openssh-to-GHCR.yaml/badge.svg)](https://github.com/Laboratory-for-Safe-and-Secure-Systems/motra-images/actions/workflows/publish-openssh-to-GHCR.yaml)
+
 ## Table of Contents
 
 - [Overview](#overview)
