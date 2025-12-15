@@ -1,7 +1,7 @@
-FROM mcr.microsoft.com/dotnet/runtime:8.0-jammy AS base
+FROM mcr.microsoft.com/dotnet/runtime:9.0 AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # clone and build the ModelCompiler for dotnet
@@ -9,7 +9,7 @@ ARG UA_COMPILER_GIT_REF="master"
 RUN git clone --depth 1 --branch $UA_COMPILER_GIT_REF https://github.com/OPCFoundation/UA-ModelCompiler.git --recursive 
 
 # this is persistent accross the build layers, also downstream stages inherit this configuration
-ENV OPTIONS="-c Release -f net8.0 -p:NoHttps=true -p:Dockerbuild=true -p:CustomTestTarget=net8.0"
+ENV OPTIONS="-c Release -f net9.0 -p:NoHttps=true -p:Dockerbuild=true -p:CustomTestTarget=net9.0"
 
 
 # this step is used to build the OPC UA model compiler directly from the .NET sources from github
@@ -17,7 +17,7 @@ FROM build AS publish
 WORKDIR /src/UA-ModelCompiler/
 ENV DOTNET_EnableWriteXorExecute=0
 # output the executable and all required .dlls to /app/publish
-RUN dotnet build "ModelCompiler Solution.sln" ${OPTIONS} -o /app/publish 
+RUN dotnet build "ModelCompiler.sln" ${OPTIONS} -o /app/publish 
 
 # copy the model compiler into a new instance and generate NodeSet definitions from the OPC data models
 FROM base AS final
