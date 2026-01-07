@@ -17,7 +17,7 @@ FROM build AS publish
 WORKDIR /src/UA-ModelCompiler/
 ENV DOTNET_EnableWriteXorExecute=0
 # output the executable and all required .dlls to /app/publish
-RUN dotnet build "ModelCompiler.sln" ${OPTIONS} -o /app/publish 
+RUN dotnet build -maxcpucount:1 "ModelCompiler.sln" ${OPTIONS} -o /app/publish 
 
 # copy the model compiler into a new instance and generate NodeSet definitions from the OPC data models
 FROM base AS final
