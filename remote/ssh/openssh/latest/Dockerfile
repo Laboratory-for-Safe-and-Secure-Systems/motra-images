@@ -31,11 +31,13 @@ RUN groupadd --gid "$USER_GID" "$USERNAME" && \
     chmod 0440 /etc/sudoers.d/"$USERNAME"
 
 WORKDIR /home/$USERNAME/motra
-# COPY --chown=$USER_UID:$USER_GID . .
 
 EXPOSE 22
 
 WORKDIR /home/$USERNAME/
+COPY --from=container_context entrypoint.sh entrypoint.sh
 
-CMD ["/usr/sbin/sshd","-D"]
+ENV OPENSSH_INSTALL_PATH="/usr"
+ENTRYPOINT ["/usr/bin/env"]
+CMD ["./entrypoint.sh"]
 

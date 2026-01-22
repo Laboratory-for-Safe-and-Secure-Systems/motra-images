@@ -62,7 +62,7 @@ RUN curl -sLO "https://ftp.hostserver.de/pub/OpenBSD/OpenSSH/portable/openssh-$O
 # configure server options 
 #RUN  sed -i.bak 's/^#LogLevel INFO$/LogLevel DEBUG3/' /opt/openssh-${OPENSSH_VER}/etc/sshd_config
 
-COPY entrypoint.sh entrypoint.sh
+COPY --from=container_context entrypoint.sh entrypoint.sh
 
 # create aliases to use the client side tools inside the container
 RUN /bin/bash -c "echo $' \n\

@@ -4,6 +4,6 @@ services:
     restart: no
     build:
       context: .
-      dockerfile: CustomBuild.Dockerfile
+      dockerfile: Dockerfile
     ports:
       - 2222:22
