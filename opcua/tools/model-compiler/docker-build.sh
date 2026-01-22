@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# PROFILES: tool
+# DESCRIPTION: OPC UA Model compiler to rebuild or modify existing data architectures.
+
 
 # configure local contexts
 CONTAINER_CONTEXT=${CONTAINER_CONTEXT:-$(realpath .)} 
