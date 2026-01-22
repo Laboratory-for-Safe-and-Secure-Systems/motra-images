@@ -11,6 +11,8 @@ UA_DEBUG=${UA_DEBUG:-"ON"}
 # CUSTOM_TARGET=${CUSTOM_TARGET:-"--target development"}
 CUSTOM_TARGET=${CUSTOM_TARGET:-""}
 
+DOCKER_BUILD_TAG=${DOCKER_BUILD_TAG:-"lds-c-server"}
+
 docker build \
     --build-context     container_context=$CONTAINER_CONTEXT \
     --build-arg         OPEN62541_VERSION=$OPEN62541_VERSION \
@@ -18,4 +20,4 @@ docker build \
     --build-arg         UA_DEBUG=$UA_DEBUG \
     . \
     $CUSTOM_TARGET \
-    -t lds-c-server 
+    -t $DOCKER_BUILD_TAG

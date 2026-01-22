@@ -10,10 +10,12 @@ COMPANIONSPEC_CONTEXT=${COMPANIONSPEC_CONTEXT:-$(realpath ../../../../meta/compa
 
 NODESET_MODEL=${NODESET_MODEL:-"FullSystem.NodeSet2.xml"} 
 
+DOCKER_BUILD_TAG=${DOCKER_BUILD_TAG:-"python-server"}
+
 docker build \
     --build-context     container_context=$CONTAINER_CONTEXT \
     --build-context     nodeset_context=$NODESET_CONTEXT \
     --build-context     companion_context=$COMPANIONSPEC_CONTEXT \
     --build-arg         NODESET_MODEL=$NODESET_MODEL \
     . \
-    -t python-server  
+    -t $DOCKER_BUILD_TAG

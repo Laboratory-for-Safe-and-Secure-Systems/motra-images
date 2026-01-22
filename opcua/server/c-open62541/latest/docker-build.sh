@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# PROFILES: core, sim, opcua, ot
+# DESCRIPTION: OPC UA core stack from open62541
 
 # configure local contexts
 CONTAINER_CONTEXT=${CONTAINER_CONTEXT:-$(realpath .)} 
@@ -12,6 +14,8 @@ UA_DEBUG=${UA_DEBUG:-"OFF"}
 # CUSTOM_TARGET=${CUSTOM_TARGET:-"--target development"}
 CUSTOM_TARGET=${CUSTOM_TARGET:-""}
 
+DOCKER_BUILD_TAG=${DOCKER_BUILD_TAG:-"c-server"}
+
 docker build \
     --build-context     container_context=$CONTAINER_CONTEXT \
     --build-context     nodeset_context=$NODESET_CONTEXT \
@@ -22,4 +26,4 @@ docker build \
     --build-arg         UA_DEBUG=$UA_DEBUG \
     . \
     $CUSTOM_TARGET \
-    -t c-server 
+    -t $DOCKER_BUILD_TAG

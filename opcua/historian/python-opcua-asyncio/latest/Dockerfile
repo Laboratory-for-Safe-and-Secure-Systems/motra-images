@@ -20,10 +20,10 @@ RUN pip install \
 VOLUME /database
 
 # Copy app files
-COPY /app /app
+COPY --from=container_context app /app
 
 # startup is controlled by this script which depends on environment variables
-COPY /startup.sh /
+COPY --from=container_context startup.sh /
 
 # will be executed on startup
 ENTRYPOINT [ "usr/bin/env" ]

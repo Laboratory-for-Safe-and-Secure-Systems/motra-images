@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# PROFILES: core, sim, opcua, ot
+# DESCRIPTION: OPC UA core stack from OPC foundation
 
 # configure local contexts
 CONTAINER_CONTEXT=${CONTAINER_CONTEXT:-$(realpath .)} 
@@ -8,6 +10,8 @@ CONFIGURATION_CONTEXT=${CONFIGURATION_CONTEXT:-$(realpath ../../../../meta/serve
 
 NODESET_MODEL=${NODESET_MODEL:-"FullSystem.PredefinedNodes.uanodes"} 
 
+DOCKER_BUILD_TAG=${DOCKER_BUILD_TAG:-"dotnet-server"}
+
 docker build \
     --build-context     container_context=$CONTAINER_CONTEXT \
     --build-context     nodeset_context=$NODESET_CONTEXT \
@@ -15,4 +19,4 @@ docker build \
     --build-context     configuration_context=$CONFIGURATION_CONTEXT \
     --build-arg         NODESET_MODEL=$NODESET_MODEL \
     . \
-    -t dotnet-server
+    -t $DOCKER_BUILD_TAG
