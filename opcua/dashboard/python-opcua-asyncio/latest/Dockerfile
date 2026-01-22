@@ -13,13 +13,13 @@ RUN pip install \
     dash
 
 # Copy app files
-COPY /app /app
+COPY --from=container_context app /app
 
 # Copy PKI scripts
-COPY /pki /pki
+COPY --from=container_context pki /pki
 
 # startup is controlled by this script which depends on environment variables
-COPY /startup.sh /
+COPY --from=container_context startup.sh /
 
 # will be executed on startup
 ENTRYPOINT [ "usr/bin/env" ]
