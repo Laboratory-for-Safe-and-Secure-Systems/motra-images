@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# PROFILES: discovery, opcua
+# DESCRIPTION: OPC UA C/open62541 discovery server
 
 # configure local contexts
 CONTAINER_CONTEXT=${CONTAINER_CONTEXT:-$(realpath .)} 
