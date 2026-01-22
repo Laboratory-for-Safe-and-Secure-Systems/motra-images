@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# PROFILES: core, sim, opcua
+# DESCRIPTION: OPC UA python core stack
+
 
 # configure local contexts
 CONTAINER_CONTEXT=${CONTAINER_CONTEXT:-$(realpath .)} 
