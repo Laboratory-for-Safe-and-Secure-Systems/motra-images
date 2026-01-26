@@ -26,6 +26,7 @@ RUN apt-get install -y \
     python3-sphinx graphviz \
     python3-sphinx-rtd-theme \
     python3 \
+    netcat-openbsd \
     cmake 
     # wget https://github.com/Kitware/CMake/releases/download/v3.31.7/cmake-3.31.7-linux-aarch64.sh  && \
     # chmod +x cmake-3.31.7-linux-aarch64.sh && \

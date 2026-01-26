@@ -1,5 +1,13 @@
 FROM mcr.microsoft.com/dotnet/runtime:8.0-jammy AS base
 
+# Install dependencies
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y \
+    openssl \
+    libssl-dev \
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0-jammy AS build
 WORKDIR /src
 
