@@ -7,6 +7,7 @@ from asyncua import Client
 from asyncua.common.subscription import SubscriptionHandler
 
 logging.basicConfig(level=logging.INFO)
+logging.getLogger("asyncua").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 # global queue to buffer incoming updates
