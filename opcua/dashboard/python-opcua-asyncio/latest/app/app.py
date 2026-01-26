@@ -15,6 +15,9 @@ from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 
 logging.basicConfig(level=logging.INFO)
+logging.getLogger("asyncua").setLevel(logging.WARNING)
+logging.getLogger("dash").setLevel(logging.WARNING)
+logging.getLogger("werkzeug").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 # queue for buffering setter requests received from dashboard
