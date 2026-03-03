@@ -30,8 +30,10 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ${{ github.workspace }}/remote/ssh/openssh
-          file: ${{ github.workspace }}/remote/ssh/openssh/CustomBuild.Dockerfile
+          context: ${{ github.workspace }}/remote/ssh/openssh/custom
+          build-contexts: |
+            container_context=${{ github.workspace }}/remote/ssh/openssh/custom
+          file: ${{ github.workspace }}/remote/ssh/openssh/custom/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: false
           tags: ${{ steps.meta.outputs.tags }}
@@ -60,8 +62,10 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ${{ github.workspace }}/remote/ssh/openssh
-          file: ${{ github.workspace }}/remote/ssh/openssh/CVE-2019-6111.Dockerfile
+          context: ${{ github.workspace }}/remote/ssh/openssh/cve-2019-6111
+          build-contexts: |
+            container_context=${{ github.workspace }}/remote/ssh/openssh/cve-2019-6111
+          file: ${{ github.workspace }}/remote/ssh/openssh/cve-2019-6111/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: false
           tags: ${{ steps.meta.outputs.tags }}
