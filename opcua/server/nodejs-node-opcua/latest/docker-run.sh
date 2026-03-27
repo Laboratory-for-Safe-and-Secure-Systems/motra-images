@@ -23,6 +23,12 @@ if [[ -n "$ACTION_MODEL_ABSPATH" ]]; then
   DOCKER_ARGS+=" -v ${ACTION_MODEL_ABSPATH}:/usr/src/app/Server.NodeSet2.xml"
 fi
 
+# mount certificates into the container, so the default cert-manager can use them
+if [[ -n "$CERTIFICATE_STORE" ]]; then
+  echo "Provided certificate path: $CERTIFICATE_STORE"
+  DOCKER_ARGS+=" -v ${CERTIFICATE_STORE}:/certs/opcua/"
+fi
+
 echo " \$ docker run -d $DOCKER_ARGS node-server $CONTAINER_ARGS "
 docker run -d $DOCKER_ARGS node-server $CONTAINER_ARGS
 

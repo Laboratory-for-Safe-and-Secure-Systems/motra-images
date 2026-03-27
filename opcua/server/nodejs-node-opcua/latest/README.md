@@ -38,6 +38,7 @@ Start the default container to run a local node server with exposed ports on loc
 ```bash
 export ACTION_MODEL_ABSPATH="$(realpath ../../../../meta/demo-nodeset2)/FullSystem.NodeSet2.xml"
 export CUSTOM_OPC_PORT=4840
+mkdir -p certs && export CERTIFICATE_STORE=./certs/
 ./docker-run.sh
 ```
 

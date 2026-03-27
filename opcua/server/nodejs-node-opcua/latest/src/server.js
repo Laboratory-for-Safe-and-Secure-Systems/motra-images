@@ -1,9 +1,9 @@
 // source: https://github.com/node-opcua/node-opcua/issues/1391
 
-import { OPCUAServer, nodesets, SecurityPolicy } from "node-opcua";
+import { OPCUAServer, OPCUACertificateManager, nodesets, SecurityPolicy } from "node-opcua";
 import { fileURLToPath } from 'url';
 import path from 'path';
-
+import fs from 'fs';
 
 async function main() {
 
@@ -17,9 +17,17 @@ async function main() {
         // path.join(__dirname, "./companion_spec", "compspec", "Opc.Ua.Di.NodeSet2.xml"),
     ];
 
+    const certRoot = path.resolve("/certs/opcua/")
+    if (fs.existsSync(certRoot)){
+	console.log("Found existing certificate root!");
+    }
+
     const server = new OPCUAServer({
         port: 4840, 
         resourcePath: "/KRITIS3M/", // Configured Endpoint
+	serverCertificateManager: new OPCUACertificateManager({
+        	rootFolder: certRoot, 
+    	}),
         buildInfo: { // this needs more work, might get passed from NodeSet to the Server in the future?
             productName: "Pentesting Server",
             buildNumber: "1.0.0",
