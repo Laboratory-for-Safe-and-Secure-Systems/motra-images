@@ -24,14 +24,19 @@ async function main() {
 
     const server = new OPCUAServer({
         port: 4840, 
+        sessionTimeout:  30000, // get a shorter timeout for testbed measurements
+        maxConnectionsPerEndpoint: 50,
         resourcePath: "/KRITIS3M/", // Configured Endpoint
-	serverCertificateManager: new OPCUACertificateManager({
-        	rootFolder: certRoot, 
-    	}),
+        serverCertificateManager: new OPCUACertificateManager({
+                rootFolder: certRoot, 
+            }),
         buildInfo: { // this needs more work, might get passed from NodeSet to the Server in the future?
             productName: "Pentesting Server",
             buildNumber: "1.0.0",
             buildDate: new Date(),
+        },
+        serverCapabilities: {
+            maxSessions: 100,
         },
         skipOwnNamespace: true,
         nodeset_filename: xmlFiles, 
