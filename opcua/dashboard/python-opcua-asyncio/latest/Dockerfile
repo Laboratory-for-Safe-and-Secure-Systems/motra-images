@@ -1,6 +1,7 @@
 FROM python:3.11.12-slim-bookworm
 
 # Install dependencies
+configuration for healthcheck on dashboard and added notes in NodeJS readme.)
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     openssl \

@@ -33,7 +33,8 @@ export NODESET_CONTEXT=$(realpath ../../../../meta/demo-nodeset2/)
 export COMPANIONSPEC_CONTEXT=$(realpath ../../../../meta/companion-specifications/)
 ```
 
-Start the default container to run a local node server with exposed ports on localhost/0.0.0.0:4840 
+Start the default container to run a local node server with exposed ports on localhost/0.0.0.0:4840.
+We use the certificate store to generate new certificates into an existing folder, so we keep the configuration even on rebuild.
 
 ```bash
 export ACTION_MODEL_ABSPATH="$(realpath ../../../../meta/demo-nodeset2)/FullSystem.NodeSet2.xml"
